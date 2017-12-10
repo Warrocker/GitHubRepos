@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner
 /**
  * Created by Warrocker on 10.12.2017.
  */
-/** @see javaReposPresenterTest
+/** @see JavaReposPresenterTest
  *  Kotlin don`t work with this test, but java do
  */
 @RunWith(MockitoJUnitRunner::class)

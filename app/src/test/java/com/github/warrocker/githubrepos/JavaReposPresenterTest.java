@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
  */
 // this test here cause kotlin test don`t work
 @RunWith(MockitoJUnitRunner.class)
-public class javaReposPresenterTest {
+public class JavaReposPresenterTest {
     @Mock
     private IReposView view;
     @Mock
