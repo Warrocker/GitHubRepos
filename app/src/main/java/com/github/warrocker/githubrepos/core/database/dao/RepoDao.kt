@@ -1,9 +1,6 @@
 package com.github.warrocker.githubrepos.core.database.dao
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import com.github.warrocker.githubrepos.core.entity.reposentities.RepoItem
 import io.reactivex.Single
 
@@ -14,12 +11,15 @@ import io.reactivex.Single
 @Dao
 interface RepoDao {
     @Query("SELECT * FROM repoItem")
-    fun getAll(): Single<List<RepoItem>>
+    fun getAllByName(): Single<List<RepoItem>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(repos: List<RepoItem>)
+
 
     @Delete
     fun delete(repo: RepoItem)
 
+    @Query("DELETE FROM repoItem")
+    fun clearTable()
 }

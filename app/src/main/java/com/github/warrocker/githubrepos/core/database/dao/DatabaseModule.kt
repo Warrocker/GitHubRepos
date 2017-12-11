@@ -16,22 +16,25 @@ object DatabaseModule {
 
         object : Thread() {
             override fun run() {
+                GitHubApplication.instance.db?.repoDao()?.clearTable()
                 GitHubApplication.instance.db?.repoDao()?.insertAll(repos)
             }
         }.start()
     }
-    fun getReposFromDB(responseListener: OnFinishLoadListener<List<RepoItem>>){
-        GitHubApplication.instance.db?.repoDao()?.getAll()
+    fun getReposFromDB(responseListener: OnFinishLoadListener<List<RepoItem>>) : DisposableSingleObserver<List<RepoItem>>{
+        val disposable: DisposableSingleObserver<List<RepoItem>> = object : DisposableSingleObserver<List<RepoItem>>() {
+            override fun onSuccess(t: List<RepoItem>?) {
+                t?.let { responseListener.onLoadFinished(it) }
+            }
+
+            override fun onError(e: Throwable?) {
+                responseListener.onLoadInterrupted()
+            }
+        }
+        GitHubApplication.instance.db?.repoDao()?.getAllByName()
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribeWith(object : DisposableSingleObserver<List<RepoItem>>(){
-                    override fun onSuccess(t: List<RepoItem>?) {
-                        t?.let { responseListener.onLoadFinished(it) }
-                    }
-
-                    override fun onError(e: Throwable?) {
-                        responseListener.onLoadInterrupted()
-                    }
-                })
+                ?.subscribeWith(disposable)
+        return disposable
     }
 }

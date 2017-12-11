@@ -17,15 +17,21 @@ class ReposModelImpl : IReposModel {
 //    private var dbObserver : Subscriber<List<RepoItem>>? = null
     override fun loadRepos(searchString: String, responseListener: OnFinishLoadListener<List<RepoItem>>) {
         if(DatabaseModule.lastSearch == searchString) {
-            DatabaseModule.getReposFromDB(responseListener)
+            dbobserver = DatabaseModule.getReposFromDB(responseListener)
         } else {
-            networkModule.getRepoFromNetwork(searchString, responseListener)
+            observer = networkModule.getRepoFromNetwork(searchString, responseListener)
         }
     }
 
     override fun cancelLoad() {
-        if(observer?.isDisposed != false){
-            observer?.dispose()
+        if(observer != null) {
+            if (!observer!!.isDisposed) {
+                observer!!.dispose()
+            }
+        } else if(dbobserver != null) {
+            if (!dbobserver!!.isDisposed) {
+                dbobserver!!.dispose()
+            }
         }
     }
 }

@@ -57,22 +57,24 @@ class NetworkModule {
         Toast.makeText(context, R.string.failure_error, Toast.LENGTH_LONG).show()
         Log.d("RETROFIT ERROR", errorMessage, t)
     }
-    fun getRepoFromNetwork(searchString : String, responseListener: OnFinishLoadListener<List<RepoItem>>){
+    fun getRepoFromNetwork(searchString : String, responseListener: OnFinishLoadListener<List<RepoItem>>) : DisposableSingleObserver<Repositories>{
+        val disposable: DisposableSingleObserver<Repositories> = object : DisposableSingleObserver<Repositories>() {
+            override fun onSuccess(t: Repositories?) {
+                DatabaseModule.lastSearch = searchString
+                t?.items?.let { responseListener.onLoadFinished(it) }
+                t?.items?.let { DatabaseModule.saveRepoToDB(it) }
+            }
+
+            override fun onError(e: Throwable?) {
+                if (e is HttpException)
+                    showFailureProblem(e, e.message())
+                responseListener.onLoadInterrupted()
+            }
+        }
         iServerApi.getUserProjects(searchString)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<Repositories>(){
-                    override fun onSuccess(t: Repositories?) {
-                        DatabaseModule.lastSearch = searchString
-                        t?.items?.let { responseListener.onLoadFinished(it) }
-                        t?.items?.let { DatabaseModule.saveRepoToDB(it)}
-                    }
-
-                    override fun onError(e: Throwable?) {
-                        if(e is HttpException)
-                            showFailureProblem(e, e.message())
-                        responseListener.onLoadInterrupted()
-                    }
-                })
+                .subscribeWith(disposable)
+        return disposable
     }
 }
