@@ -13,32 +13,36 @@ class ReposPresenterImpl(private var reposModel: IReposModel, reposView : IRepos
         reposViewReference = WeakReference(reposView)
     }
     override fun onLoadInterrupted() {
-        reposViewReference?.get()?.stopProgressBar()
-        reposViewReference?.get()?.setSearchView()
-        reposViewReference?.get()?.setEmptyView(true)
+        val view = reposViewReference?.get()
+        view?.stopProgressBar()
+        view?.setSearchView()
+        view?.setEmptyView(true)
     }
 
     override fun onLoadFinished(response: List<RepoItem>) {
-        reposViewReference?.get()?.stopProgressBar()
-        reposViewReference?.get()?.updateViewWithData(response)
-        reposViewReference?.get()?.setSearchView()
+        val view = reposViewReference?.get()
+        view?.stopProgressBar()
+        view?.updateViewWithData(response)
+        view?.setSearchView()
     }
 
 
 
     override fun onSearchCalled(searchString: String) {
-        reposViewReference?.get()?.startProgressBar()
+        val view = reposViewReference?.get()
         reposModel.loadRepos(searchString, this)
-        reposViewReference?.get()?.setCancelView()
-        reposViewReference?.get()?.clearItems()
-        reposViewReference?.get()?.setEmptyView(false)
+        view?.startProgressBar()
+        view?.setCancelView()
+        view?.clearItems()
+        view?.setEmptyView(false)
     }
 
     override fun onSearchCancelled() {
-        reposViewReference?.get()?.stopProgressBar()
-        reposViewReference?.get()?.setSearchView()
+        val view = reposViewReference?.get()
         reposModel.cancelLoad()
-        reposViewReference?.get()?.setEmptyView(true)
+        view?.stopProgressBar()
+        view?.setSearchView()
+        view?.setEmptyView(true)
 
     }
 

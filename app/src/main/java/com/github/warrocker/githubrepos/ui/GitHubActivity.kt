@@ -23,6 +23,7 @@ class GitHubActivity : AppCompatActivity(), IActivityContextSender{
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        isChangingConfigurations
         setContentView(R.layout.activity_github)
         ActivityContextKeeper.instance?.context = this
         FragmentUtils.replaceFragment(SplashFragment(), false)

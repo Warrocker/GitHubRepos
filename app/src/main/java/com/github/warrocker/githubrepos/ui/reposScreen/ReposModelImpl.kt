@@ -12,11 +12,11 @@ import io.reactivex.observers.DisposableSingleObserver
  */
 class ReposModelImpl : IReposModel {
     private var networkModule = NetworkModule()
-    private var observer : DisposableSingleObserver<Repositories>? = null
-    private var dbobserver : DisposableSingleObserver<List<RepoItem>>? = null
-//    private var dbObserver : Subscriber<List<RepoItem>>? = null
+    private var observer: DisposableSingleObserver<Repositories>? = null
+    private var dbobserver: DisposableSingleObserver<List<RepoItem>>? = null
+    //    private var dbObserver : Subscriber<List<RepoItem>>? = null
     override fun loadRepos(searchString: String, responseListener: OnFinishLoadListener<List<RepoItem>>) {
-        if(DatabaseModule.lastSearch == searchString) {
+        if (DatabaseModule.lastSearch == searchString) {
             dbobserver = DatabaseModule.getReposFromDB(responseListener)
         } else {
             observer = networkModule.getRepoFromNetwork(searchString, responseListener)
@@ -24,14 +24,10 @@ class ReposModelImpl : IReposModel {
     }
 
     override fun cancelLoad() {
-        if(observer != null) {
-            if (!observer!!.isDisposed) {
-                observer!!.dispose()
-            }
-        } else if(dbobserver != null) {
-            if (!dbobserver!!.isDisposed) {
-                dbobserver!!.dispose()
-            }
+        if (observer?.isDisposed == false) {
+            observer?.dispose()
+        } else if (dbobserver?.isDisposed == false) {
+            dbobserver!!.dispose()
         }
     }
 }

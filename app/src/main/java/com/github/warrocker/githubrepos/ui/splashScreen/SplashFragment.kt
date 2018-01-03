@@ -22,16 +22,18 @@ import net.frakbot.jumpingbeans.JumpingBeans
  * Created by Warrocker on 09.12.2017.
  */
 class SplashFragment : Fragment() {
-    private val BEANS_DURATION = 1200
-    private val BEANS_DELAY = 3000
-    private val ANIM_DELAY = 1500
-
+    companion object {
+        private val BEANS_DURATION = 1200
+        private val BEANS_DELAY = 3000
+        private val ANIM_DELAY = 1500
+    }
     private var jumpingBuilder: JumpingBeans? = null
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater!!.inflate(R.layout.fragment_splash_screen, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        retainInstance = true
         jumpingBuilder = JumpingBeans
                 .with(tvTitle)
                 .appendJumpingDots()

@@ -12,7 +12,8 @@ import com.google.gson.annotations.SerializedName
  */
 @Entity(tableName = "repoItem")
 class RepoItem {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    var databaseId: Int? = null
     @SerializedName("id")
     var id: Int? = null
     @ColumnInfo(name = "name")
