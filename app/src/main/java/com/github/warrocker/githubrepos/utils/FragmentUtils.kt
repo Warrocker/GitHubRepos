@@ -1,8 +1,8 @@
 package com.github.warrocker.githubrepos.utils
 
-import android.app.Activity
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import com.github.warrocker.githubrepos.core.ActivityContextKeeper
 
 /**
@@ -28,14 +28,14 @@ object FragmentUtils {
 
     private fun changeFragmentInternal(fragment: Fragment, args: Bundle?, addToBackStack: Boolean, asReplace: Boolean) {
         val sender = ActivityContextKeeper.instance?.context
-        val transaction = (sender as Activity).fragmentManager.beginTransaction()
+        val transaction = (sender as FragmentActivity).supportFragmentManager.beginTransaction()
 //        transaction.setCustomAnimations(R.animator.fade_in, R.animator.fade_out, R.animator.fade_in, R.animator.fade_out)
-        fragment.arguments = args
+        args?.let { fragment.arguments = it }
         val name = fragment.javaClass.name
         if (asReplace) {
-            transaction.replace(sender.getContainer(), fragment, name)
+            transaction.replace(sender.container!!, fragment, name)
         } else {
-            transaction.add(sender.getContainer(), fragment, name)
+            transaction.add(sender.container!!, fragment, name)
         }
         if (addToBackStack) transaction.addToBackStack(name)
         transaction.commit()

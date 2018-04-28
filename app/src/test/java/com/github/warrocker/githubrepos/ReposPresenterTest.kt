@@ -1,9 +1,7 @@
 package com.github.warrocker.githubrepos
 
 import com.github.warrocker.githubrepos.core.entity.reposentities.RepoItem
-import com.github.warrocker.githubrepos.ui.reposScreen.IReposModel
-import com.github.warrocker.githubrepos.ui.reposScreen.IReposView
-import com.github.warrocker.githubrepos.ui.reposScreen.ReposPresenterImpl
+import com.github.warrocker.githubrepos.ui.reposScreen.ReposPresenter
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,12 +22,12 @@ class ReposPresenterTest {
     var view: IReposView? = null
     @Mock
     var model: IReposModel? = null
-    private var presenter: ReposPresenterImpl? = null
+    private var presenter: ReposPresenter? = null
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        presenter = model?.let { view?.let { it1 -> ReposPresenterImpl(it, it1) } }
+        presenter = model?.let { view?.let { it1 -> ReposPresenter(it, it1) } }
     }
 
     @Test

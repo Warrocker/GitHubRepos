@@ -1,23 +1,21 @@
 package com.github.warrocker.githubrepos.core
 
 import android.app.Application
-import android.arch.persistence.room.Room
-import com.github.warrocker.githubrepos.core.database.AppDatabase
+import com.github.warrocker.githubrepos.core.database.dao.DatabaseModule
+import com.github.warrocker.githubrepos.core.rest.NetworkModule
 
 
 /**
  * Created by Warrocker on 10.12.2017.
  */
 class GitHubApplication : Application() {
-    var db : AppDatabase? = null
+    companion object {
+        lateinit var sharedInstance : GitHubApplication
+    }
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(applicationContext,
-                AppDatabase::class.java, "github_database").build()
-        instance = this
-
-    }
-    companion object {
-        lateinit var instance : GitHubApplication
+        sharedInstance = this
+        DatabaseModule.instance.setUpDatabase(this)
+        NetworkModule.instance.setUpNetworkModule()
     }
 }

@@ -12,10 +12,10 @@ import android.widget.ImageView
  * Created by Warrocker on 09.12.2017.
  */
 object AnimatorHelper {
-    private val SHOW_DURATION: Long = 200
-    private val TO_NORMAL_DURATION: Long = 100
-    private val HIDE_DURATION: Long = 200
-    private val HIDE_DELAY: Long = 400
+    private const val SHOW_DURATION: Long = 200
+    private const val TO_NORMAL_DURATION: Long = 100
+    private const val HIDE_DURATION: Long = 200
+    private const val HIDE_DELAY: Long = 400
     private var isAnimate = false
 
     fun likeAnimation(@DrawableRes icon: Int, view: ImageView?) {

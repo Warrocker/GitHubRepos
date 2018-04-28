@@ -10,9 +10,7 @@ import android.view.inputmethod.InputMethodManager
 object GlobalUtils {
     fun switchOfTheKeyBoard(view: View?) {
         // switch off keyboard
-        if (view != null) {
-            val imm = GitHubApplication.instance.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
+        val imm = view?.context?.applicationContext?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

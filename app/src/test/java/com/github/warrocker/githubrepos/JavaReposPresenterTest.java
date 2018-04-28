@@ -1,9 +1,7 @@
 package com.github.warrocker.githubrepos;
 
 import com.github.warrocker.githubrepos.core.entity.reposentities.RepoItem;
-import com.github.warrocker.githubrepos.ui.reposScreen.IReposModel;
-import com.github.warrocker.githubrepos.ui.reposScreen.IReposView;
-import com.github.warrocker.githubrepos.ui.reposScreen.ReposPresenterImpl;
+import com.github.warrocker.githubrepos.ui.reposScreen.ReposPresenter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +25,11 @@ public class JavaReposPresenterTest {
     private IReposView view;
     @Mock
     private IReposModel model;
-    private ReposPresenterImpl presenter;
+    private ReposPresenter presenter;
 
     @Before
     public void setUp() {
-        presenter = new ReposPresenterImpl(model, view);
+        presenter = new ReposPresenter(model, view);
     }
 
     @Test

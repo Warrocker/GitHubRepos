@@ -1,54 +1,90 @@
 package com.github.warrocker.githubrepos.ui.reposScreen
 
-import android.app.Fragment
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
-import android.text.TextUtils
+import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.warrocker.githubrepos.R
-import com.github.warrocker.githubrepos.core.ActivityContextKeeper
 import com.github.warrocker.githubrepos.core.GlobalUtils
 import com.github.warrocker.githubrepos.core.entity.reposentities.RepoItem
+import com.github.warrocker.githubrepos.ui.base.BaseFragment
 import com.github.warrocker.githubrepos.ui.reposScreen.adapters.RvRepoAdapter
 import kotlinx.android.synthetic.main.fragment_user_repo.*
-import kotlinx.android.synthetic.main.header_small.*
 
 /**
  * Created by Warrocker on 10.12.2017.
  */
-class ReposFragment : Fragment(), IReposView {
-    override fun setEmptyView(visible : Boolean) {
-        if(visible)
-        tvEmpty?.visibility =  View.VISIBLE
-        else
-        tvEmpty?.visibility =  View.GONE
+class ReposFragment : BaseFragment(), ReposContract.View {
+    companion object {
+        fun newInstance(): ReposFragment {
+            val fragment = ReposFragment()
+            fragment.arguments = Bundle.EMPTY
+            return fragment
+        }
+    }
+
+    private lateinit var reposPresenter: ReposContract.Presenter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        reposPresenter = ReposProvider.instance.providePresenter()
+        reposPresenter.view = this
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_user_repo, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        retainInstance = true
+        rv.layoutManager = LinearLayoutManager(activity)
+        setSearchView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reposPresenter.onDestroyed()
+    }
+
+    override fun showEmptyView() {
+        tvEmpty?.visibility = View.VISIBLE
+    }
+
+    override fun hideEmptyView() {
+        tvEmpty?.visibility = View.GONE
     }
 
     override fun clearItems() {
-        if(rv.adapter != null)
-        (rv.adapter as RvRepoAdapter).clear()
-    }
-
-    override fun setCancelView() {
-        ivSearch.setImageDrawable(ActivityContextKeeper.instance?.context?.getMainContext()?.let { ContextCompat.getDrawable(it, R.drawable.clear) })
-        ivSearch.setOnClickListener({
-                reposPresenter?.onSearchCancelled()
-        })
+        (rv.adapter as? RvRepoAdapter)?.clear()
     }
 
     override fun setSearchView() {
-        ivSearch.setImageDrawable(ActivityContextKeeper.instance?.context?.getMainContext()?.let { ContextCompat.getDrawable(it, R.drawable.search) })
-        ivSearch.setOnClickListener({
-            val searchString = etSearch.text.toString().trim()
-            if (!TextUtils.isEmpty(searchString)) {
-                reposPresenter?.onSearchCalled(searchString)
-                GlobalUtils.switchOfTheKeyBoard(it)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            val handler = Handler()
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                reposPresenter.onSearchCalled(query ?: "")
+                GlobalUtils.switchOfTheKeyBoard(searchView)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                handler.removeCallbacksAndMessages(null)
+                handler.postDelayed({
+                    onQueryTextSubmit(newText)
+                }, 500)
+                return true
             }
 
         })
+        searchView.setOnCloseListener {
+            reposPresenter.onSearchCancelled()
+            true
+        }
     }
 
     override fun startProgressBar() {
@@ -61,28 +97,9 @@ class ReposFragment : Fragment(), IReposView {
 
     override fun updateViewWithData(repositories: List<RepoItem>) {
         if (rv.adapter == null) {
-            rv.adapter = repositories.let { RvRepoAdapter(it) }
+            rv.adapter = RvRepoAdapter(repositories)
         } else {
-            repositories.let { (rv.adapter as RvRepoAdapter).changeDataSet(it) }
+            (rv.adapter as RvRepoAdapter).changeDataSet(repositories)
         }
     }
-
-    var reposPresenter: IReposPresenter? = null
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater!!.inflate(R.layout.fragment_user_repo, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        retainInstance = true
-        rv.layoutManager = LinearLayoutManager(activity)
-        setSearchView()
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        reposPresenter?.onSearchCancelled()
-    }
-
 }

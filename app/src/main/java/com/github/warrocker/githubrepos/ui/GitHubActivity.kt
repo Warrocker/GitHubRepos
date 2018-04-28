@@ -13,20 +13,14 @@ import com.github.warrocker.githubrepos.utils.FragmentUtils
  * Created by Warrocker on 09.12.2017.
  */
 
-class GitHubActivity : AppCompatActivity(), IActivityContextSender{
-    override fun getMainContext(): Context {
-        return this
-    }
+class GitHubActivity : AppCompatActivity(), IActivityContextSender {
+    override val mainContext: Context? = this
+    override val container: Int? = R.id.container
 
-    override fun getContainer(): Int {
-        return R.id.container
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isChangingConfigurations
         setContentView(R.layout.activity_github)
         ActivityContextKeeper.instance?.context = this
         FragmentUtils.replaceFragment(SplashFragment(), false)
-
     }
 }

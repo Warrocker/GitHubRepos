@@ -8,7 +8,7 @@ import retrofit2.http.Query
 /**
  * Created by Warrocker on 10.12.2017.
  */
-interface IApiService {
+interface ApiService {
     @GET("/search/repositories")
     fun getUserProjects(@Query("q") queryString: String): Single<Repositories>
 }
